@@ -1,12 +1,29 @@
-void setup() {
-  // initialize digital pin LED_BUILTIN as an output.
-    pinMode(LED_BUILTIN, OUTPUT);
+// Include the Arduino Stepper Library
+#include <Stepper.h>
+
+// Number of steps per output rotation
+const int stepsPerRevolution = 200;
+
+// Create Instance of Stepper library
+Stepper myStepper(stepsPerRevolution, 11, 10, 9, 8);
+
+void setup()
+{
+  // set the speed at 60 rpm:
+  myStepper.setSpeed(60);
+  // initialize the serial port:
+  Serial.begin(9600);
 }
 
-// the loop function runs over and over again forever
-void loop() {
-  digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-  delay(1000);                       // wait for a second
-  digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
-  delay(1000);                       // wait for a second
+void loop() 
+{
+  // step one revolution in one direction:
+  Serial.println("clockwise");
+  myStepper.step(stepsPerRevolution);
+  delay(500);
+
+  // step one revolution in the other direction:
+  Serial.println("counterclockwise");
+  myStepper.step(-stepsPerRevolution);
+  delay(500);
 }
