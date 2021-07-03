@@ -15,9 +15,6 @@ def presets(satellite: str):
     formula = lambda a, b, theta : (((a*(1-(((a**2-b**2))/a)**(2)))/(1+(((a**2-b**2)/a)*cos(theta))))**(2)) + (a**2-b**2)-(2*(abs((a*(1-((a**2-b**2)/a**2)))/(1+(((a**2-b**2)/a)*cos(theta))))*cos(theta)))
     b_calc = lambda a, e: a*((1+e)*(1-e))**(1/2) # Derive b with a known a 
 
-    # Select a Preset
-    preset = input("Choose a preset: ")
-
 
     if satellite.lower() == "earth":
         b = b_calc(a, EARTH)
