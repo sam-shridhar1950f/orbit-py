@@ -32,15 +32,24 @@ def earth_preset(period=45):
     b = b_calc(a, EARTH_E) #m
     earth_mass = 5.97216787e+24 #kg
     sun_mass = 1.989e+30 #kg
-    distance = formula(a,b,theta) #m
+    distance = formula(a, b, theta) #m
     v = velocity(G, (earth_mass + sun_mass)*(sf)**(3), distance, a) #m/s
     v *= (365 * 24 * 60 * 60) / period
     w = v/distance # maybe factor in height of planet
     print(f"Distance: {distance}, Velocity: {v}, Angular Velocity: {w}")
 
-def moon_preset():
+def moon_preset(period=45):
+    a = 18 * 2.54 / 100 #m
+    a_raw = 384748000 #m
+    sf = a / a_raw
     b = b_calc(a, MOON_E)
-    distance = formula(a,b,theta)
+    moon_mass = 7.34767309e+22 #kg
+    earth_mass = 5.97216787e+24 #kg
+    distance = formula(a, b, theta)
+    v = velocity(G, (moon_mass + earth_mass)*(sf)**(3), distance, a) #m/s
+    v *= (24 * 60 * 60) / period
+    w = v/distance
+    print(f"Distance: {distance}, Velocity: {v}, Angular Velocity: {w}")
 
 def presetselector():
     drawing = Drawing(app, width=220, height=220)
