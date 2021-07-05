@@ -144,7 +144,7 @@ while True:
         if PRESET == 'MERCURY':
             d, v, w = mercury_calc()
         time_between_steps = 2 * pi / w / STEPS_PER_REVOLUTION
-        rotate_motor.motor_go(False, 'Full', 1, time_between_steps, False, 0.05)
+        rotate_motor.motor_go(False, 'Full', 1, time_between_steps, False, time_between_steps)
         THETA += 2 * pi / STEPS_PER_REVOLUTION
     else:
         rotate_motor.motor_stop()
