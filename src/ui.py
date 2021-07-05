@@ -137,15 +137,14 @@ STEPS_PER_REVOLUTION = 200
 while True:
     if ORBIT_STATUS:
         d, v, w = -1, -1, -1
-        time_between_steps = 2 * pi / w / STEPS_PER_REVOLUTION
         if PRESET == 'EARTH':
             d, v, w = earth_calc()
         if PRESET == 'MOON':
             d, v, w = moon_calc()
         if PRESET == 'MERCURY':
             d, v, w = mercury_calc()
-        rotate_motor.motor_go(False, 'Full', STEPS_PER_REVOLUTION, time_between_steps, False, 0.05)
-        time.sleep(time_between_steps)
+        time_between_steps = 2 * pi / w / STEPS_PER_REVOLUTION
+        rotate_motor.motor_go(False, 'Full', 1, time_between_steps, False, 0.05)
         THETA += 2 * pi / STEPS_PER_REVOLUTION
     else:
         rotate_motor.motor_stop()
