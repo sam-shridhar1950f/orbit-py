@@ -12,6 +12,7 @@ MOON_MASS = 7.34767309e+22 #kg
 SUN_MASS = 1.989e+30 #kg
 MERCURY_MASS = 3.285e+23 #kg
 A = 18 * 2.54 / 100 #m
+PERIOD = 45 #s
 EARTH_A = 149.60e+9 #m
 MOON_A = 384748000 #m
 MERCURY_A = 57.909e+9 #m
@@ -37,7 +38,7 @@ app = App(title='test')
 
 message = Text(app, text='Orbit Simulator', size=20)
 
-def earth_preset(period=45):
+def earth_preset(period=PERIOD):
     sf = A / EARTH_A
     b = b_calc(A, EARTH_E) #m
     d = distance_calc(A, b, theta) #m
@@ -46,7 +47,7 @@ def earth_preset(period=45):
     w = v/d # maybe factor in height of planet
     print(f"Distance: {d}, Velocity: {v}, Angular Velocity: {w}")
 
-def moon_preset(period=45):
+def moon_preset(period=PERIOD):
     sf = A / MOON_A
     b = b_calc(A, MOON_E)
     d = distance_calc(A, b, theta)
@@ -55,7 +56,7 @@ def moon_preset(period=45):
     w = v/d
     print(f"Distance: {d}, Velocity: {v}, Angular Velocity: {w}")
 
-def mercury_preset(period=45):
+def mercury_preset(period=PERIOD):
     sf = A / MERCURY_A
     b = b_calc(A, MERCURY_E)
     d = distance_calc(A, b, theta)
