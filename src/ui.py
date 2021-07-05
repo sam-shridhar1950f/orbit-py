@@ -136,7 +136,7 @@ GPIO.setup(EN_pin, GPIO.OUT) # set enable pin as output
 STEPS_PER_REVOLUTION = 200
 while True:
     if ORBIT_STATUS:
-        d, v, w = 0, 0, 0
+        d, v, w = -1, -1, -1
         time_between_steps = 2 * pi / w / STEPS_PER_REVOLUTION
         if PRESET == 'EARTH':
             d, v, w = earth_calc()
