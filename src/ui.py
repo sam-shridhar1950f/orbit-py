@@ -119,13 +119,9 @@ def mercury_calc(period=PERIOD):
 
 
 earthPresetButton = PushButton(master=app, command=earth_select, text='Earth', align="left")
-
 moonPresetButton = PushButton(master=app, command=moon_select, text='Moon', align="left")
 mercuryPresetButton = PushButton(master=app, command=mercury_select, text='Mercury', align="left")
 stopPresetButton = PushButton(master=app, command=stop_select, text='Stop', align='left')
-
-text_box = TextBox(app, text="enter text", align="left")
-submit = PushButton(master=app, command=presetselector, text='Submit', align="left")
 
 app.display()
 
