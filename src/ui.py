@@ -166,4 +166,5 @@ while True:
         magnet_motor_steps = desired_steps
     else:
         rotate_motor.motor_stop()
+        magnet_motor.motor_stop()
         GPIO.cleanup()
