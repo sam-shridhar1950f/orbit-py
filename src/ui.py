@@ -4,6 +4,7 @@ from math import cos, pi
 import RPi.GPIO as GPIO
 from RpiMotorLib import RpiMotorLib
 import time
+from sys import exit
 
 G = 6.67408e-11
 
@@ -65,6 +66,7 @@ def stop_select():
     ORBIT_STATUS = False
     THETA = 0
     rotate_motor_steps = 0
+    
 
 def earth_calc(period=PERIOD):
     sf = A / EARTH_A
@@ -96,7 +98,8 @@ def mercury_calc(period=PERIOD):
     print(f"Distance: {d}, Velocity: {v}, Angular Velocity: {w}")
     return d, v, w
 
-
+def kill_select():
+    exit()
 #
 # def presetselector():
 #     drawing = Drawing(app, width=220, height=220)
@@ -122,6 +125,7 @@ earthPresetButton = PushButton(master=app, command=earth_select, text='Earth', a
 moonPresetButton = PushButton(master=app, command=moon_select, text='Moon', align="left")
 mercuryPresetButton = PushButton(master=app, command=mercury_select, text='Mercury', align="left")
 stopPresetButton = PushButton(master=app, command=stop_select, text='Stop', align='left')
+killPresetButton = PushButton(master=app, command=kill_select, text='Kill', align='left')
 
 app.display()
 
