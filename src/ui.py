@@ -31,12 +31,12 @@ ORBIT_STATUS = False #orbit status for turning on and off servo motor
 # import orbital dataset
 df = pd.read_csv("../data/sol_data.csv")
 
-# formula = lambda a, b, theta : (((a*(1-(((a**2-b**2))/a)**(2)))/(1+(((a**2-b**2)/a)*cos(theta))))**(2)) + (a**2-b**2)-(2*(abs((a*(1-((a**2-b**2)/a**2)))/(1+(((a**2-b**2)/a)*cos(theta))))*cos(theta)))
 
-
+# Preset Functions
 b_calc = lambda a, e : a*((1+e)*(1-e))**(1/2) # Derive b with a known a 
 distance_calc = lambda a, b, theta : ((a ** 2) - ((a ** 2 - b ** 2) ** (1 / 2)) ** (2)) / (a + ((a ** 2 - b ** 2) ** (1 / 2)) * (cos(theta)))
 velocity_calc = lambda g, m, r, a : (g * m * ((2 / r) - (1 / a))) ** (1 / 2)
+aphelion_calc = lambda a, e : a*(1+e)
 
 
 app = App(title='test')
@@ -100,24 +100,25 @@ def mercury_calc(period=PERIOD):
 
 def kill_select():
     exit()
-#
-# def presetselector():
-#     drawing = Drawing(app, width=220, height=220)
-#     selection = str(text_box.value)
-#     ind = df[df["eName"]==selection].index.values
-#     e = float(df["eccentricity"][ind].values)
-#     b = b_calc(a, e)
-#     print(b)
-#
-#     #drawing.oval(170, 30, 190, 50, color="white", outline=True)
-#
-#     drawing.oval(0, 30, 0 + (a*30), 30 + (b*30), color="blue")
-#
-#     distance = distance_calc(a, b, theta)
-#
-#     # insert movement code
-#
-#     print(distance)
+
+def check(semimajor_axis, E):
+    # Table Diameter: 48 Inches
+    # calculate its aphelion and check if it exceeds 48 inches (relative to its starting position)
+    aphelion = aphelion_calc(semimajor_axis, E)
+    return aphelion
+    
+
+
+def user_ellipse_select(starting_position, satellite_mass, mainbody_mass, semimajor_axis, E):
+    sf = starting_position / semimajor_axis
+    b = b_calc(starting_position, E)
+    d = distance_calc(starting_position, b, THETA)
+    v = velocity_calc(G, (satellite_mass + mainbody_mass) * sf ** 3, d, A)
+    v *= (MERCURY_PERIOD * 24 * 60 * 60) / period
+    w = v / d
+
+    return d, v, w # returns distance, velocity, and angular velocity
+
 
 
 
