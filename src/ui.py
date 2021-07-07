@@ -47,26 +47,22 @@ message = Text(app, text='Orbit Simulator', size=20)
 def earth_select():
     PRESET = 'EARTH'
     ORBIT_STATUS = True
-    THETA = 0
-    rotate_motor_steps = 0
+    THETA, rotate_motor_steps = 0
 
 def moon_select():
     PRESET = 'MOON'
     ORBIT_STATUS = True
-    THETA = 0
-    rotate_motor_steps = 0
+    THETA, rotate_motor_steps = 0
 
 def mercury_select():
     PRESET = 'MERCURY'
     ORBIT_STATUS = True
-    THETA = 0
-    rotate_motor_steps = 0
+    THETA, rotate_motor_steps = 0
 
 def stop_select():
     PRESET = None
     ORBIT_STATUS = False
-    THETA = 0
-    rotate_motor_steps = 0
+    THETA, rotate_motor_steps = 0
     
 
 def earth_calc(period=PERIOD):
