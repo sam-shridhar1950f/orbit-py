@@ -115,6 +115,12 @@ def end(issue):
     exit()
     
 def user_ellipse_select(starting_position, satellite_mass, mainbody_mass, Planetary_PERIOD, E):
+    starting_position =  float(startBox.value)
+    satellite_mass = float(satelliteBox.value)
+    mainbody_mass = float(mainbodyBox.value)
+    Planetary_PERIOD = float(PlanetaryPeriodBox.value)
+    E = float(EccentricityBox.value)
+    
     PRESET = "USER_SELECT"
     # sf = starting_position / semimajor_axis
     b = b_calc(starting_position, E)
@@ -141,11 +147,12 @@ stopPresetButton = PushButton(master=app, command=stop_select, text='Stop', alig
 killPresetButton = PushButton(master=app, command=kill_select, text='Kill', align='left')
 
 # User Input Text Boxes
-startBox = TextBox(master=app, text="starting position", align="left")
-satelliteBox = TextBox(master=app, text="satellite mass", align="left")
-mainbodyBox = TextBox(master=app, text="main body mass", align="left")
-PlanetaryPeriodBox = TextBox(master=app, text="Period", align="left")
-EccentricityBox =  TextBox(master=app, text="Eccentricity", align="left")
+startBox = TextBox(master=app, text="starting position", align="left", width="fill")
+satelliteBox = TextBox(master=app, text="satellite mass", align="left",width="fill")
+mainbodyBox = TextBox(master=app, text="main body mass", align="left",width="fill")
+PlanetaryPeriodBox = TextBox(master=app, text="Period", align="left",width="fill")
+EccentricityBox =  TextBox(master=app, text="Eccentricity", align="left",width="fill")
+usersubmit =  PushButton(master=app, text="Submit", command=user_ellipse_select, align="left")
 
 
 app.display()
