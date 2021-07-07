@@ -114,14 +114,13 @@ def end(issue):
     time.sleep(3)
     exit()
     
-
-
-def user_ellipse_select(starting_position, satellite_mass, mainbody_mass, E):
+def user_ellipse_select(starting_position, satellite_mass, mainbody_mass, Planetary_PERIOD, E):
+    PRESET = "USER_SELECT"
     # sf = starting_position / semimajor_axis
     b = b_calc(starting_position, E)
     d = distance_calc(starting_position, b, THETA)
     v = velocity_calc(G, (satellite_mass + mainbody_mass) * sf ** 3, d, A)
-    v *= (MERCURY_PERIOD * 24 * 60 * 60) / period
+    v *= (Planetary_PERIOD * 24 * 60 * 60) / period
     w = v / d
     
     aphelion, perihelion = check(starting_position, E)
@@ -129,6 +128,7 @@ def user_ellipse_select(starting_position, satellite_mass, mainbody_mass, E):
     if aphelion > 23 and perihelion < 0: # 23 is in inches. semimajor_axis parameter will be inputted in inches, 0 is an arbitrary value for now
         end("Invalid orbit, recheck starting length")
     else:
+        ORBIT_STATUS = True
         return d, v, w # returns distance, velocity, and angular velocity
 
 
@@ -141,6 +141,11 @@ stopPresetButton = PushButton(master=app, command=stop_select, text='Stop', alig
 killPresetButton = PushButton(master=app, command=kill_select, text='Kill', align='left')
 
 # User Input Text Boxes
+startBox = TextBox(master=app, text="starting position", align="left")
+satelliteBox = TextBox(master=app, text="satellite mass", align="left")
+mainbodyBox = TextBox(master=app, text="main body mass", align="left")
+PlanetaryPeriodBox = TextBox(master=app, text="Period", align="left")
+EccentricityBox =  TextBox(master=app, text="Eccentricity", align="left")
 
 
 app.display()
@@ -170,6 +175,8 @@ while True:
             d, v, w = moon_calc()
         if PRESET == 'MERCURY':
             d, v, w = mercury_calc()
+        if PRESET == "USER_SELECT":
+            d, v, w = user_ellipse_select()
         #rotation
         time_between_steps_r = 2 * pi / w / STEPS_PER_REVOLUTION_R
         rotate_motor.motor_go(not CLOCKWISE, 'Full', 1, time_between_steps_r, False, time_between_steps_r)
