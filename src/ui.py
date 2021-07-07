@@ -1,4 +1,4 @@
-import pandas as pd
+
 from guizero import *
 from math import cos, pi
 import RPi.GPIO as GPIO
@@ -29,7 +29,7 @@ THETA = 0
 ORBIT_STATUS = False #orbit status for turning on and off servo motor
 
 # import orbital dataset
-df = pd.read_csv("../data/sol_data.csv")
+
 
 
 # Preset Functions
@@ -37,6 +37,7 @@ b_calc = lambda a, e : a*((1+e)*(1-e))**(1/2) # Derive b with a known a
 distance_calc = lambda a, b, theta : ((a ** 2) - ((a ** 2 - b ** 2) ** (1 / 2)) ** (2)) / (a + ((a ** 2 - b ** 2) ** (1 / 2)) * (cos(theta)))
 velocity_calc = lambda g, m, r, a : (g * m * ((2 / r) - (1 / a))) ** (1 / 2)
 aphelion_calc = lambda a, e : a*(1+e)
+perihelion_calc = lambda a, e: a*(1-e)
 
 
 app = App(title='test')
@@ -105,19 +106,30 @@ def check(semimajor_axis, E):
     # Table Diameter: 48 Inches
     # calculate its aphelion and check if it exceeds 48 inches (relative to its starting position)
     aphelion = aphelion_calc(semimajor_axis, E)
-    return aphelion
+    perihelion = perihelion_calc(semimajor_axis, E)
+    return aphelion, perihelion
+    
+def end(issue):
+    raise Exception(issue)
+    time.sleep(3)
+    exit()
     
 
 
-def user_ellipse_select(starting_position, satellite_mass, mainbody_mass, semimajor_axis, E):
-    sf = starting_position / semimajor_axis
+def user_ellipse_select(starting_position, satellite_mass, mainbody_mass, E):
+    # sf = starting_position / semimajor_axis
     b = b_calc(starting_position, E)
     d = distance_calc(starting_position, b, THETA)
     v = velocity_calc(G, (satellite_mass + mainbody_mass) * sf ** 3, d, A)
     v *= (MERCURY_PERIOD * 24 * 60 * 60) / period
     w = v / d
-
-    return d, v, w # returns distance, velocity, and angular velocity
+    
+    aphelion, perihelion = check(starting_position, E)
+    
+    if aphelion > 23 and perihelion < 0: # 23 is in inches. semimajor_axis parameter will be inputted in inches, 0 is an arbitrary value for now
+        end("Invalid orbit, recheck starting length")
+    else:
+        return d, v, w # returns distance, velocity, and angular velocity
 
 
 
@@ -127,6 +139,9 @@ moonPresetButton = PushButton(master=app, command=moon_select, text='Moon', alig
 mercuryPresetButton = PushButton(master=app, command=mercury_select, text='Mercury', align="left")
 stopPresetButton = PushButton(master=app, command=stop_select, text='Stop', align='left')
 killPresetButton = PushButton(master=app, command=kill_select, text='Kill', align='left')
+
+# User Input Text Boxes
+
 
 app.display()
 
