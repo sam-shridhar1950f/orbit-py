@@ -176,8 +176,8 @@ userSubmit =  PushButton(master=app, text="Submit", command=user_ellipse_select,
 app.display()
 
 #stepper motor example code
-direction= 22 # Direction (DIR) GPIO Pin
-step = 23 # Step GPIO Pin
+direction = 16 # Direction (DIR) GPIO Pin
+step = 13 # Step GPIO Pin
 EN_pin = 24 # enable pin (LOW to enable)
 
 # Declare a instance of class pass GPIO pins numbers and the motor type
@@ -188,7 +188,7 @@ rotate_motor_steps = 0
 magnet_motor = RpiMotorLib.A4988Nema(direction, step, (21, 21, 21), "DRV8825")
 STEPS_PER_REVOLUTION_M = 200
 magnet_motor_steps = 0
-METERS_PER_STEP = 0.1 #todo find actual value
+METERS_PER_STEP = 0.1 # todo find actual value
 CLOCKWISE = True
 
 while True:
@@ -206,17 +206,17 @@ while True:
             break
         #rotation
         time_between_steps_r = 2 * pi / w / STEPS_PER_REVOLUTION_R
-        rotate_motor.motor_go(not CLOCKWISE, 'Full', 1, time_between_steps_r, False, time_between_steps_r)
+        rotate_motor.motor_go(not CLOCKWISE, 'Full', 1, max(0.0005, time_between_steps_r), False, max(0.0005, time_between_steps_r))
         rotate_motor_steps += 1
         THETA = (2 * pi / STEPS_PER_REVOLUTION_R) * rotate_motor_steps
 
-        #extension
+       #extension
         desired_steps = d / METERS_PER_STEP
         time_between_steps_m = 0.001
         if desired_steps > magnet_motor_steps:
-            magnet_motor.motor_go(not CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps), time_between_steps_m, False, time_between_steps_m)
+            magnet_motor.motor_go(not CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps), max(0.0005, time_between_steps_m), False, time_between_steps_m)
         elif desired_steps < magnet_motor_steps:
-            magnet_motor.motor_go(CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps), time_between_steps_m, False, time_between_steps_m)
+            magnet_motor.motor_go(CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps), max(0.0005, time_between_steps_m), False, time_between_steps_m)
         magnet_motor_steps = desired_steps
     else:
         rotate_motor.motor_stop()
