@@ -106,8 +106,8 @@ def end(issue):
     time.sleep(3)
     exit()
     
-def user_ellipse_select(starting_position, satellite_mass, mainbody_mass, Planetary_PERIOD, E):
-    starting_position =  float(startBox.value)
+def user_ellipse_select():
+    starting_position = float(startBox.value)
     satellite_mass = float(satelliteBox.value)
     mainbody_mass = float(mainbodyBox.value)
     Planetary_PERIOD = float(PlanetaryPeriodBox.value)
@@ -123,7 +123,7 @@ def user_ellipse_select(starting_position, satellite_mass, mainbody_mass, Planet
     
     aphelion, perihelion = check(starting_position, E)
     
-    if aphelion > 23 and perihelion < 0: # 23 is in inches. semimajor_axis parameter will be inputted in inches, 0 is an arbitrary value for now
+    if aphelion > 23 * 2.54 / 100 and perihelion < 0: #0 is an arbitrary value for now
         end("Invalid orbit, recheck starting length")
     else:
         ORBIT_STATUS = True
@@ -139,9 +139,9 @@ stopPresetButton = PushButton(master=app, command=stop_select, text='Stop', alig
 killPresetButton = PushButton(master=app, command=kill_select, text='Kill', align='left')
 
 # User Input Text Boxes
-startBox = TextBox(master=app, text="starting position", align="left", width="fill")
-satelliteBox = TextBox(master=app, text="satellite mass", align="left",width="fill")
-mainbodyBox = TextBox(master=app, text="main body mass", align="left",width="fill")
+startBox = TextBox(master=app, text="Starting Position", align="left", width="fill")
+satelliteBox = TextBox(master=app, text="Satellite Mass", align="left",width="fill")
+mainbodyBox = TextBox(master=app, text="Main Body Mass", align="left",width="fill")
 PlanetaryPeriodBox = TextBox(master=app, text="Period", align="left",width="fill")
 EccentricityBox =  TextBox(master=app, text="Eccentricity", align="left",width="fill")
 usersubmit =  PushButton(master=app, text="Submit", command=user_ellipse_select, align="left")
@@ -193,4 +193,4 @@ while True:
     else:
         rotate_motor.motor_stop()
         magnet_motor.motor_stop()
-        GPIO.cleanup()
+        # GPIO.cleanup()
