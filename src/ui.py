@@ -214,9 +214,9 @@ while True:
         desired_steps = d / METERS_PER_STEP
         time_between_steps_m = 0.001
         if desired_steps > magnet_motor_steps:
-            magnet_motor.motor_go(not CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps), max(0.0005, time_between_steps_m), False, time_between_steps_m)
+            magnet_motor.motor_go(not CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps), max(0.0005, time_between_steps_m), False, max(0.0005, time_between_steps_m))
         elif desired_steps < magnet_motor_steps:
-            magnet_motor.motor_go(CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps), max(0.0005, time_between_steps_m), False, time_between_steps_m)
+            magnet_motor.motor_go(CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps), max(0.0005, time_between_steps_m), False, max(0.0005, time_between_steps_m))
         magnet_motor_steps = desired_steps
     else:
         rotate_motor.motor_stop()
