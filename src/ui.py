@@ -29,11 +29,12 @@ THETA = 0
 ORBIT_STATUS = False #orbit status for turning on and off servo motor
 
 # Preset Functions
-b_calc = lambda a, e : a*((1+e)*(1-e))**(1/2) # Derive b with a known a 
-distance_calc = lambda a, b, theta : ((a ** 2) - ((a ** 2 - b ** 2) ** (1 / 2)) ** (2)) / (a + ((a ** 2 - b ** 2) ** (1 / 2)) * (cos(theta)))
-velocity_calc = lambda g, m, r, a : (g * m * ((2 / r) - (1 / a))) ** (1 / 2)
-aphelion_calc = lambda a, e : a*(1+e)
+b_calc = lambda a, e: a*((1+e)*(1-e))**(1/2) # Derive b with a known a
+distance_calc = lambda a, b, theta: ((a ** 2) - ((a ** 2 - b ** 2) ** (1 / 2)) ** (2)) / (a + ((a ** 2 - b ** 2) ** (1 / 2)) * (cos(theta)))
+velocity_calc = lambda g, m, r, a: (g * m * ((2 / r) - (1 / a))) ** (1 / 2)
+aphelion_calc = lambda a, e: a*(1+e)
 perihelion_calc = lambda a, e: a*(1-e)
+period_calc = lambda g, a, m: ((4 * pi**2 * a**3)/(g * m))**(1/2)
 
 
 app = App(title='test')
@@ -41,21 +42,37 @@ app = App(title='test')
 message = Text(app, text='Orbit Simulator', size=20)
 
 def earth_select():
+    global PRESET
+    global ORBIT_STATUS
+    global THETA
+    global rotate_motor_steps
     PRESET = 'EARTH'
     ORBIT_STATUS = True
     THETA, rotate_motor_steps = 0
 
 def moon_select():
+    global PRESET
+    global ORBIT_STATUS
+    global THETA
+    global rotate_motor_steps
     PRESET = 'MOON'
     ORBIT_STATUS = True
     THETA, rotate_motor_steps = 0
 
 def mercury_select():
+    global PRESET
+    global ORBIT_STATUS
+    global THETA
+    global rotate_motor_steps
     PRESET = 'MERCURY'
     ORBIT_STATUS = True
     THETA, rotate_motor_steps = 0
 
 def stop_select():
+    global PRESET
+    global ORBIT_STATUS
+    global THETA
+    global rotate_motor_steps
     PRESET = None
     ORBIT_STATUS = False
     THETA, rotate_motor_steps = 0
@@ -102,35 +119,43 @@ def check(semimajor_axis, E):
     return aphelion, perihelion
     
 def end(issue):
-    raise Exception(issue)
+    print(issue)
     time.sleep(3)
     exit()
     
 def user_ellipse_select():
-    starting_position = float(startBox.value)
-    satellite_mass = float(satelliteBox.value)
-    mainbody_mass = float(mainbodyBox.value)
-    Planetary_PERIOD = float(PlanetaryPeriodBox.value)
-    E = float(EccentricityBox.value)
-    
+    global PRESET
+    global ORBIT_STATUS
+    global THETA
+    global rotate_motor_steps
     PRESET = "USER_SELECT"
-    # sf = starting_position / semimajor_axis
-    b = b_calc(starting_position, E)
-    d = distance_calc(starting_position, b, THETA)
-    v = velocity_calc(G, (satellite_mass + mainbody_mass) * sf ** 3, d, A)
-    v *= (Planetary_PERIOD * 24 * 60 * 60) / period
+    THETA, rotate_motor_steps = 0
+    ORBIT_STATUS = True
+    if not user_ellipse_calc():
+        ORBIT_STATUS = False
+
+
+def user_ellipse_calc(period=PERIOD):
+    global ORBIT_STATUS
+    a = float(startBox.value) * 2.54 / 100  # semi-major axis in m
+    # satellite_mass = float(satelliteBox.value)
+    mainbody_mass = float(mainbodyBox.value)
+    # Planetary_PERIOD = float(PlanetaryPeriodBox.value)
+    E = float(eccentricityBox.value)
+    b = b_calc(a, E)
+    d = distance_calc(a, b, THETA)
+    v = velocity_calc(G, mainbody_mass, d, a)
+    p = period_calc(G, a, mainbody_mass)
+    v *= p / period
     w = v / d
-    
-    aphelion, perihelion = check(starting_position, E)
-    
-    if aphelion > 23 * 2.54 / 100 and perihelion < 0: #0 is an arbitrary value for now
-        end("Invalid orbit, recheck starting length")
+
+    aphelion, perihelion = check(a, E)
+
+    if aphelion > 23 * 2.54 / 100 or perihelion < 0:  # 0 is an arbitrary value for now
+        ORBIT_STATUS = False
+        return -1, -1, -1
     else:
-        ORBIT_STATUS = True
-        return d, v, w # returns distance, velocity, and angular velocity
-
-
-
+        return d, v, w  # returns distance, velocity, and angular velocity
 
 earthPresetButton = PushButton(master=app, command=earth_select, text='Earth', align="left")
 moonPresetButton = PushButton(master=app, command=moon_select, text='Moon', align="left")
@@ -140,11 +165,11 @@ killPresetButton = PushButton(master=app, command=kill_select, text='Kill', alig
 
 # User Input Text Boxes
 startBox = TextBox(master=app, text="Starting Position", align="left", width="fill")
-satelliteBox = TextBox(master=app, text="Satellite Mass", align="left",width="fill")
+# satelliteBox = TextBox(master=app, text="Satellite Mass", align="left",width="fill")
 mainbodyBox = TextBox(master=app, text="Main Body Mass", align="left",width="fill")
-PlanetaryPeriodBox = TextBox(master=app, text="Period", align="left",width="fill")
-EccentricityBox =  TextBox(master=app, text="Eccentricity", align="left",width="fill")
-usersubmit =  PushButton(master=app, text="Submit", command=user_ellipse_select, align="left")
+# PlanetaryPeriodBox = TextBox(master=app, text="Period", align="left",width="fill")
+eccentricityBox =  TextBox(master=app, text="Eccentricity", align="left", width="fill")
+userSubmit =  PushButton(master=app, text="Submit", command=user_ellipse_select, align="left")
 
 
 app.display()
@@ -175,7 +200,9 @@ while True:
         if PRESET == 'MERCURY':
             d, v, w = mercury_calc()
         if PRESET == "USER_SELECT":
-            d, v, w = user_ellipse_select()
+            d, v, w = user_ellipse_calc()
+        if d == -1:
+            break
         #rotation
         time_between_steps_r = 2 * pi / w / STEPS_PER_REVOLUTION_R
         rotate_motor.motor_go(not CLOCKWISE, 'Full', 1, time_between_steps_r, False, time_between_steps_r)
