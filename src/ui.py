@@ -131,7 +131,8 @@ def user_ellipse_select():
     PRESET = "USER_SELECT"
     THETA, rotate_motor_steps = 0
     ORBIT_STATUS = True
-    if not user_ellipse_calc():
+    d, v, w = user_ellipse_calc()
+    if d == -1:
         ORBIT_STATUS = False
 
 
