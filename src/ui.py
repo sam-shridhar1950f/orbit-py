@@ -31,12 +31,9 @@ ORBIT_STATUS = False #orbit status for turning on and off servo motor
 # import orbital dataset
 df = pd.read_csv("../data/sol_data.csv")
 
-# formula = lambda a, b, theta : (((a*(1-(((a**2-b**2))/a)**(2)))/(1+(((a**2-b**2)/a)*cos(theta))))**(2)) + (a**2-b**2)-(2*(abs((a*(1-((a**2-b**2)/a**2)))/(1+(((a**2-b**2)/a)*cos(theta))))*cos(theta)))
-
-
-b_calc = lambda a, e : a*((1+e)*(1-e))**(1/2) # Derive b with a known a 
-distance_calc = lambda a, b, theta : ((a ** 2) - ((a ** 2 - b ** 2) ** (1 / 2)) ** (2)) / (a + ((a ** 2 - b ** 2) ** (1 / 2)) * (cos(theta)))
-velocity_calc = lambda g, m, r, a : (g * m * ((2 / r) - (1 / a))) ** (1 / 2)
+b_calc = lambda a, e: a*((1+e)*(1-e))**(1/2) # Derive b with a known a
+distance_calc = lambda a, b, theta: b ** 2 / (a + (a ** 2 - b ** 2) ** (1/2) * cos(theta))
+velocity_calc = lambda g, m, r, a: (g * m * ((2 / r) - (1 / a))) ** (1 / 2)
 
 
 app = App(title='test')
@@ -142,7 +139,7 @@ rotate_motor_steps = 0
 magnet_motor = RpiMotorLib.A4988Nema(direction, step, (21, 21, 21), "DRV8825")
 STEPS_PER_REVOLUTION_M = 200
 magnet_motor_steps = 0
-METERS_PER_STEP = 0.1
+METERS_PER_STEP = 0.1 #todo find actual value
 CLOCKWISE = True
 
 while True:
