@@ -5,6 +5,12 @@ import RPi.GPIO as GPIO
 from RpiMotorLib import RpiMotorLib
 import time
 from sys import exit
+import logging 
+
+# log file config 
+logging.basicConfig(filename="out.log", format="%(message)s",filemode="w")
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG) 
 
 G = 6.67408e-11
 
@@ -227,6 +233,8 @@ while True:
             magnet_motor.motor_go(not CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps), max(0.0005, time_between_steps_m), False, 0)
         elif desired_steps < magnet_motor_steps:
             magnet_motor.motor_go(CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps), max(0.0005, time_between_steps_m), False, 0)
+        info = f"d: {d}, v: {v}, w: {w}, time_between_steps: {time_between_steps_r}, steps taken: {desired_steps - magnet_motor_steps}" # log important data
+        logger.info(info)
         magnet_motor_steps = desired_steps
     else:
         rotate_motor.motor_stop()
