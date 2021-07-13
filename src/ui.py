@@ -15,7 +15,7 @@ EARTH_MASS = 5.97216787e+24 #kg
 MOON_MASS = 7.34767309e+22 #kg
 SUN_MASS = 1.989e+30 #kg
 MERCURY_MASS = 3.285e+23 #kg
-A = 18 * 2.54 / 100 #m
+A = 18 * 2.54 / 100 #m todo make shorter to like 15
 PERIOD = 45 #s
 EARTH_A = 149.60e+9 #m
 MOON_A = 384748000 #m
@@ -169,27 +169,37 @@ startBox = TextBox(master=app, text="Starting Position", align="left", width="fi
 # satelliteBox = TextBox(master=app, text="Satellite Mass", align="left",width="fill")
 mainbodyBox = TextBox(master=app, text="Main Body Mass", align="left",width="fill")
 # PlanetaryPeriodBox = TextBox(master=app, text="Period", align="left",width="fill")
-eccentricityBox =  TextBox(master=app, text="Eccentricity", align="left", width="fill")
-userSubmit =  PushButton(master=app, text="Submit", command=user_ellipse_select, align="left")
+eccentricityBox = TextBox(master=app, text="Eccentricity", align="left", width="fill")
+userSubmit = PushButton(master=app, text="Submit", command=user_ellipse_select, align="left")
 
 
 app.display()
 
 #stepper motor example code
-direction = 16 # Direction (DIR) GPIO Pin
-step = 13 # Step GPIO Pin
-EN_pin = 24 # enable pin (LOW to enable)
+direction_r = 16 # Direction (DIR) GPIO Pin
+step_r = 13 # Step GPIO Pin
+EN_pin_r = 24 # enable pin (LOW to enable)
+direction_m = 16 # Direction (DIR) GPIO Pin
+step_m = 13 # Step GPIO Pin
+EN_pin_m = 24 # enable pin (LOW to enable)
 
 # Declare a instance of class pass GPIO pins numbers and the motor type
-rotate_motor = RpiMotorLib.A4988Nema(direction, step, (21, 21, 21), "DRV8825")
-GPIO.setup(EN_pin, GPIO.OUT) # set enable pin as output
+rotate_motor = RpiMotorLib.A4988Nema(direction_r, step_r, (21, 21, 21), "DRV8825")
+GPIO.setup(EN_pin_r, GPIO.OUT) # set enable pin as output (may not be necessary)
+GPIO.setup(EN_pin_m, GPIO.OUT) # set enable pin as output (may not be necessary)
 STEPS_PER_REVOLUTION_R = 200 # todo find actual value, may be 400
 rotate_motor_steps = 0
-magnet_motor = RpiMotorLib.A4988Nema(direction, step, (21, 21, 21), "DRV8825")
+magnet_motor = RpiMotorLib.A4988Nema(direction_m, step_m, (21, 21, 21), "DRV8825")
 STEPS_PER_REVOLUTION_M = 200
 magnet_motor_steps = 0
 METERS_PER_STEP = 0.1 # todo find actual value
-CLOCKWISE = True
+CLOCKWISE = True # todo find actual value (change to false if spinning wrong direction)
+
+#Possible fail points
+#1. Inaccurate steps (loop causes motor to spin only half as much)
+#Possible fix: test experimentally and check if taking 2 steps at a time makes a difference
+#2. Spinning is choppy
+#Possible fix: have constant speed (last resort)
 
 while True:
     if ORBIT_STATUS:
@@ -210,7 +220,7 @@ while True:
         rotate_motor_steps += 1
         THETA = (2 * pi / STEPS_PER_REVOLUTION_R) * rotate_motor_steps
 
-       #extension
+        #extension
         desired_steps = (int) (d / METERS_PER_STEP)
         time_between_steps_m = 0.001
         if desired_steps > magnet_motor_steps:
