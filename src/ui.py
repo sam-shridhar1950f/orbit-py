@@ -5,6 +5,7 @@ import RPi.GPIO as GPIO
 from RpiMotorLib import RpiMotorLib
 import time
 from sys import exit
+import threading
 
 G = 6.67408e-11
 
@@ -184,7 +185,7 @@ step_m = 13 # Step GPIO Pin
 EN_pin_m = 24 # enable pin (LOW to enable)
 
 # Declare a instance of class pass GPIO pins numbers and the motor type
-rotate_motor = RpiMotorLib.A4988Nema(direction_r, step_r, (21, 21, 21), "DRV8825")
+rotation_motor = RpiMotorLib.A4988Nema(direction_r, step_r, (21, 21, 21), "DRV8825")
 GPIO.setup(EN_pin_r, GPIO.OUT) # set enable pin as output (may not be necessary)
 GPIO.setup(EN_pin_m, GPIO.OUT) # set enable pin as output (may not be necessary)
 STEPS_PER_REVOLUTION_R = 200 # todo find actual value, may be 400
@@ -201,6 +202,9 @@ CLOCKWISE = True # todo find actual value (change to false if spinning wrong dir
 #2. Spinning is choppy
 #Possible fix: have constant speed (last resort)
 
+def turn_motor(motor, direction, type, steps, stepdelay, initdelay):
+    motor.motor_go(direction, type, steps, stepdelay, initdelay)
+
 while True:
     if ORBIT_STATUS:
         d, v, w = -1, -1, -1
@@ -216,19 +220,32 @@ while True:
             break
         #rotation
         time_between_steps_r = 2 * pi / w / STEPS_PER_REVOLUTION_R
-        rotate_motor.motor_go(not CLOCKWISE, 'Full', 1, 0, False, max(0.0005, time_between_steps_r))
+        t1 = threading.Thread(target=turn_motor, args=(not CLOCKWISE, 'Full', 1, 0, False, max(0.0005, time_between_steps_r)))
+        # extension
+        desired_steps = (int)(d / METERS_PER_STEP)
+        time_between_steps_m = 0.001
+        t2 = threading.Thread(target=turn_motor, args=(not CLOCKWISE, 'Full', 0, 0, False, 0))
+        if desired_steps > magnet_motor_steps:
+            t2 = threading.Thread(target=turn_motor, args=(not CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps),
+                                  max(0.0005, time_between_steps_m), False, 0))
+            # magnet_motor.motor_go(not CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps),
+            #                       max(0.0005, time_between_steps_m), False, 0)
+        elif desired_steps < magnet_motor_steps:
+            t2 = threading.Thread(target=turn_motor,
+                                  args=(CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps),
+                                        max(0.0005, time_between_steps_m), False, 0))
+            # magnet_motor.motor_go(CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps),
+            #                       max(0.0005, time_between_steps_m), False, 0)
+        t1.start()
+        t2.start()
+        t1.join()
+        t2.join()
+        magnet_motor_steps = desired_steps
+        # rotation_motor.motor_go(not CLOCKWISE, 'Full', 1, 0, False, max(0.0005, time_between_steps_r))
         rotate_motor_steps += 1
         THETA = (2 * pi / STEPS_PER_REVOLUTION_R) * rotate_motor_steps
 
-        #extension
-        desired_steps = (int) (d / METERS_PER_STEP)
-        time_between_steps_m = 0.001
-        if desired_steps > magnet_motor_steps:
-            magnet_motor.motor_go(not CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps), max(0.0005, time_between_steps_m), False, 0)
-        elif desired_steps < magnet_motor_steps:
-            magnet_motor.motor_go(CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps), max(0.0005, time_between_steps_m), False, 0)
-        magnet_motor_steps = desired_steps
     else:
-        rotate_motor.motor_stop()
+        rotation_motor.motor_stop()
         magnet_motor.motor_stop()
         # GPIO.cleanup()
