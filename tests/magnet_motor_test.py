@@ -35,9 +35,8 @@ def earth_calc(period=PERIOD):
 
 
 #stepper motor example code
-direction = 16 # Direction (DIR) GPIO Pin
+direction = 6 # Direction (DIR) GPIO Pin
 step = 13 # Step GPIO Pin
-EN_pin = 24 # enable pin (LOW to enable)
 
 # Declare a instance of class pass GPIO pins numbers and the motor type
 magnet_motor = RpiMotorLib.A4988Nema(direction, step, (21, 21, 21), "DRV8825")
