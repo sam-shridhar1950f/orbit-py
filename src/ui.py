@@ -198,7 +198,7 @@ rotate_motor_steps = 0
 magnet_motor = RpiMotorLib.A4988Nema(direction_m, step_m, (21, 21, 21), "DRV8825")
 STEPS_PER_REVOLUTION_M = 200
 magnet_motor_steps = 0
-METERS_PER_STEP = 0.1 # todo find actual value
+METERS_PER_STEP = 0.0011 # todo find actual value
 CLOCKWISE = True # todo find actual value (change to false if spinning wrong direction)
 
 #Possible fail points
@@ -225,10 +225,10 @@ while True:
         rotate_motor.motor_go(not CLOCKWISE, 'Full', 1, 0, False, max(0.0005, time_between_steps_r))
         rotate_motor_steps += 1
         THETA = (2 * pi / STEPS_PER_REVOLUTION_R) * rotate_motor_steps
-
+        magnet_motor.motor_go(CLOCKWISE, 'Full', 1, 0, False, 0)
         #extension
         desired_steps = (int) (d / METERS_PER_STEP)
-        time_between_steps_m = 0.001
+        time_between_steps_m = 0.0005
         if desired_steps > magnet_motor_steps:
             magnet_motor.motor_go(not CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps), max(0.0005, time_between_steps_m), False, 0)
         elif desired_steps < magnet_motor_steps:
