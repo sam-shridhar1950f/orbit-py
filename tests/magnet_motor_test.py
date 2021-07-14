@@ -44,7 +44,7 @@ magnet_motor = RpiMotorLib.A4988Nema(direction, step, (21, 21, 21), "DRV8825")
 STEPS_PER_REVOLUTION_R = 200
 magnet_motor_steps = 0
 rotate_motor_steps = 0
-METERS_PER_STEP = 0.01 # todo find actual value
+METERS_PER_STEP = 0.0011 # todo find actual value
 CLOCKWISE = True
 
 while True:
