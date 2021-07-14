@@ -220,22 +220,25 @@ while True:
             d, v, w = user_ellipse_calc()
         if d == -1:
             break
+        # extension
+        desired_steps = (int)(d / METERS_PER_STEP)
+        time_between_steps_m = 0.0005
+        if desired_steps > magnet_motor_steps:
+            magnet_motor.motor_go(not CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps),
+                                  max(0.0005, time_between_steps_m), False, 0)
+        elif desired_steps < magnet_motor_steps:
+            magnet_motor.motor_go(CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps),
+                                  max(0.0005, time_between_steps_m), False, 0)
+        magnet_motor_steps = desired_steps
         #rotation
         time_between_steps_r = 2 * pi / w / STEPS_PER_REVOLUTION_R
         rotate_motor.motor_go(not CLOCKWISE, 'Full', 1, 0, False, max(0.0005, time_between_steps_r))
         rotate_motor_steps += 1
         THETA = (2 * pi / STEPS_PER_REVOLUTION_R) * rotate_motor_steps
         magnet_motor.motor_go(CLOCKWISE, 'Full', 1, 0, False, 0)
-        #extension
-        desired_steps = (int) (d / METERS_PER_STEP)
-        time_between_steps_m = 0.0005
-        if desired_steps > magnet_motor_steps:
-            magnet_motor.motor_go(not CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps), max(0.0005, time_between_steps_m), False, 0)
-        elif desired_steps < magnet_motor_steps:
-            magnet_motor.motor_go(CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps), max(0.0005, time_between_steps_m), False, 0)
+
         info = f"d: {d}, v: {v}, w: {w}, time_between_steps: {time_between_steps_r}, steps taken: {desired_steps - magnet_motor_steps}" # log important data
         logger.info(info)
-        magnet_motor_steps = desired_steps
     else:
         rotate_motor.motor_stop()
         magnet_motor.motor_stop()
