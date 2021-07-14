@@ -205,6 +205,44 @@ CLOCKWISE = True # todo find actual value (change to false if spinning wrong dir
 def turn_motor(motor, direction, type, steps, stepdelay, initdelay):
     motor.motor_go(direction, type, steps, stepdelay, initdelay)
 
+def turn_rotate_motor():
+    global THETA
+    global rotate_motor_steps
+    d, v, w = -1
+    if PRESET == 'EARTH':
+        d, v, w = earth_calc()
+    if PRESET == 'MOON':
+        d, v, w = moon_calc()
+    if PRESET == 'MERCURY':
+        d, v, w = mercury_calc()
+    if PRESET == "USER_SELECT":
+        d, v, w = user_ellipse_calc()
+    time_between_steps_r = 2 * pi / w / STEPS_PER_REVOLUTION_R
+    rotation_motor.motor_go(not CLOCKWISE, 'Full', 1, 0, False, max(0.0005, time_between_steps_r))
+    rotate_motor_steps += 1
+    THETA = (2 * pi / STEPS_PER_REVOLUTION_R) * rotate_motor_steps
+
+def turn_magnet_motor():
+    global magnet_motor_steps
+    d, v, w = -1
+    if PRESET == 'EARTH':
+        d, v, w = earth_calc()
+    if PRESET == 'MOON':
+        d, v, w = moon_calc()
+    if PRESET == 'MERCURY':
+        d, v, w = mercury_calc()
+    if PRESET == "USER_SELECT":
+        d, v, w = user_ellipse_calc()
+    desired_steps = (int)(d / METERS_PER_STEP)
+    time_between_steps_m = 0.0005
+    if desired_steps > magnet_motor_steps:
+        magnet_motor.motor_go(not CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps) + 1, #may need to change to - 1
+                                  max(0.0005, time_between_steps_m), False, 0)
+    elif desired_steps < magnet_motor_steps:
+        magnet_motor.motor_go(CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps) - 1, #may need to change to + 1
+                                        max(0.0005, time_between_steps_m), False, 0)
+    magnet_motor_steps = desired_steps
+
 while True:
     if ORBIT_STATUS:
         d, v, w = -1, -1, -1
