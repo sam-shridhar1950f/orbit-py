@@ -14,18 +14,22 @@ logger.setLevel(logging.DEBUG)
 
 G = 6.67408e-11
 
-EARTH_E = 0.017 #eccentricities
+EARTH_E = 0.017 #eccentricities # relative to sun
 MOON_E = 0.0549 #relative to earth
-MERCURY_E = 0.2056
+MERCURY_E = 0.2056 # relative to sun
+MARGARET_E = 0.6772 #relative to uranus
 EARTH_MASS = 5.97216787e+24 #kg
 MOON_MASS = 7.34767309e+22 #kg
 SUN_MASS = 1.989e+30 #kg
 MERCURY_MASS = 3.285e+23 #kg
+URANUS_MASS = 8.681e+25 #kg
+MARGARET_MASS = -5.5e+15
 A = 10 * 2.54 / 100 #m todo make shorter to like 15
 PERIOD = 30 #s
 EARTH_A = 149.60e+9 #m
-MOON_A = 384748000 #m
+MOON_A = 384748000 #ms
 MERCURY_A = 57.909e+9 #m
+MARGARET_A = 23808000000 #m
 EARTH_PERIOD = 365 #days
 MOON_PERIOD = 28 #days
 MERCURY_PERIOD = 88 #days
@@ -77,6 +81,16 @@ def mercury_select():
     THETA = 0
     rotate_motor_steps = 0
 
+def margaret_select():
+    global PRESET
+    global ORBIT_STATUS
+    global THETA
+    global rotate_motor_steps
+    PRESET = 'MARGARET'
+    ORBIT_STATUS = True
+    THETA = 0
+    rotate_motor_steps = 0
+
 def stop_select():
     global PRESET
     global ORBIT_STATUS
@@ -113,6 +127,16 @@ def mercury_calc(period=PERIOD):
     b = b_calc(A, MERCURY_E)
     d = distance_calc(A, b, THETA)
     v = velocity_calc(G, (MERCURY_MASS + SUN_MASS) * (sf) ** (3), d, A)  # m/s
+    v *= (MERCURY_PERIOD * 24 * 60 * 60) / period
+    w = v / d
+    print(f"Distance: {d}, Velocity: {v}, Angular Velocity: {w}")
+    return d, v, w
+
+def margaret_calc(period=PERIOD):
+    sf = A / MARGARET_A
+    b = b_calc(A, MARGARET_E)
+    d = distance_calc(A, b, THETA)
+    v = velocity_calc(G, (URANUS_MASS + MARGARET_MASS) * (sf) ** (3), d, A) # m/s
     v *= (MERCURY_PERIOD * 24 * 60 * 60) / period
     w = v / d
     print(f"Distance: {d}, Velocity: {v}, Angular Velocity: {w}")
@@ -201,6 +225,8 @@ def start_select():
                 d, v, w = moon_calc()
             if PRESET == 'MERCURY':
                 d, v, w = mercury_calc()
+            if PRESET == 'MARGARET':
+                d, v, w == margaret_calc()
             if PRESET == "USER_SELECT":
                 d, v, w = user_ellipse_calc()
             if d == -1:
@@ -231,6 +257,7 @@ def start_select():
 earthPresetButton = PushButton(master=app, command=earth_select, text='Earth', align="left")
 moonPresetButton = PushButton(master=app, command=moon_select, text='Moon', align="left")
 mercuryPresetButton = PushButton(master=app, command=mercury_select, text='Mercury', align="left")
+margaretPresetButton = PushButton(master=app, command=margaret_select, text='Margaret', align="left")
 startPresetButton = PushButton(master=app, command=start_select, text='Start', align='left')
 stopPresetButton = PushButton(master=app, command=stop_select, text='Stop', align='left')
 killPresetButton = PushButton(master=app, command=kill_select, text='Kill', align='left')
