@@ -80,7 +80,7 @@ def mercury_select():
     ORBIT_STATUS = True
     THETA = 0
     rotate_motor_steps = 0
-
+    
 def margaret_select():
     global PRESET
     global ORBIT_STATUS
@@ -225,8 +225,6 @@ def start_select():
                 d, v, w = moon_calc()
             if PRESET == 'MERCURY':
                 d, v, w = mercury_calc()
-            if PRESET == 'MARGARET':
-                d, v, w == margaret_calc()
             if PRESET == "USER_SELECT":
                 d, v, w = user_ellipse_calc()
             if d == -1:
@@ -234,31 +232,35 @@ def start_select():
             # extension
             desired_steps = (int)(d / METERS_PER_STEP)
             print('Desired Steps:', desired_steps, 'Current Steps:', magnet_motor_steps)
-            time_between_steps_m = 0.0005
+            time_between_steps_m = 0.001
             if desired_steps > magnet_motor_steps:
-                magnet_motor.motor_go(not CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps),
+                magnet_motor.motor_go(not CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps) + 1,
                                       max(0.0005, time_between_steps_m), False, 0.001)
             elif desired_steps < magnet_motor_steps:
-                magnet_motor.motor_go(CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps),
+                magnet_motor.motor_go(CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps) - 1,
                                       max(0.0005, time_between_steps_m), False, 0.001)
             magnet_motor_steps = desired_steps
             #rotation
             time_between_steps_r = 2 * pi / w / STEPS_PER_REVOLUTION_R
             print('Time Between Steps:', time_between_steps_r)
-            rotate_motor.motor_go(not CLOCKWISE, 'Full', 1, 0, False, max(0.0005, time_between_steps_r))
+            rotate_motor.motor_go(not CLOCKWISE, 'Full', 1, 0, False, max(0.001, time_between_steps_r))
             #rotate_motor.motor_go(not CLOCKWISE, 'Full', 2, max(0.0005, time_between_steps_r), False, 0)
             rotate_motor_steps += 1
             THETA = (2 * pi / STEPS_PER_REVOLUTION_R) * rotate_motor_steps
-            magnet_motor.motor_go(not CLOCKWISE, 'Full', 1, 0, False, 0.001)
+            #magnet_motor.motor_go(not CLOCKWISE, 'Full', 1, 0, False, 0.001)
     else:
         rotate_motor.motor_stop()
         magnet_motor.motor_stop()
+
+def move_magnet_back():
+    magnet_motor.motor_go(CLOCKWISE, 'Full', 100, 0.001, False, 0.001)
         
 earthPresetButton = PushButton(master=app, command=earth_select, text='Earth', align="left")
 moonPresetButton = PushButton(master=app, command=moon_select, text='Moon', align="left")
 mercuryPresetButton = PushButton(master=app, command=mercury_select, text='Mercury', align="left")
 margaretPresetButton = PushButton(master=app, command=margaret_select, text='Margaret', align="left")
 startPresetButton = PushButton(master=app, command=start_select, text='Start', align='left')
+moveBackButton = PushButton(master=app, command=move_magnet_back, text='Move Back', align='left')
 stopPresetButton = PushButton(master=app, command=stop_select, text='Stop', align='left')
 killPresetButton = PushButton(master=app, command=kill_select, text='Kill', align='left')
 
@@ -307,6 +309,8 @@ while True:
             d, v, w = moon_calc()
         if PRESET == 'MERCURY':
             d, v, w = mercury_calc()
+        if PRESET == 'MARGARET':
+            d, v, w == margaret_calc()
         if PRESET == "USER_SELECT":
             d, v, w = user_ellipse_calc()
         if d == -1:
