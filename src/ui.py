@@ -237,13 +237,13 @@ def turn_magnet_motor():
         if PRESET == "USER_SELECT":
             d, v, w = user_ellipse_calc()
         desired_steps = (int)(d / METERS_PER_STEP)
-        time_between_steps_m = 0.001
+        time_between_steps_m = 0.01
         if desired_steps > magnet_motor_steps:
             magnet_motor.motor_go(not CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps) + 1, #may need to change to - 1
-                                      time_between_steps_m, False, 0)
+                                      time_between_steps_m, False, 0.001)
         elif desired_steps < magnet_motor_steps:
             magnet_motor.motor_go(CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps) - 1, #may need to change to + 1
-                                            time_between_steps_m, False, 0)
+                                            time_between_steps_m, False, 0.001)
         magnet_motor_steps = desired_steps
 
 while True:
