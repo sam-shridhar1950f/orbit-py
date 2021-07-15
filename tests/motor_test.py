@@ -15,7 +15,7 @@ magnet_motor = RpiMotorLib.A4988Nema(direction_m, step_m, (21, 21, 21), "DRV8825
 
 #magnet_motor.motor_go(not CLOCKWISE, 'Full', 200, 0, False, 0.001)
 
-#rotate_motor.motor_go(not CLOCKWISE, 'Full', 200, 0, False, 0.001)
+rotate_motor.motor_go(not CLOCKWISE, 'Full', 800, 0, False, 0.001)
 
 for i in range(800):
     rotate_motor.motor_go(CLOCKWISE, 'Full', 1, 0, False, 0.01)
