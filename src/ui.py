@@ -21,7 +21,7 @@ EARTH_MASS = 5.97216787e+24 #kg
 MOON_MASS = 7.34767309e+22 #kg
 SUN_MASS = 1.989e+30 #kg
 MERCURY_MASS = 3.285e+23 #kg
-A = 18 * 2.54 / 100 #m todo make shorter to like 15
+A = 10 * 2.54 / 100 #m todo make shorter to like 15
 PERIOD = 45 #s
 EARTH_A = 149.60e+9 #m
 MOON_A = 384748000 #m
@@ -54,7 +54,8 @@ def earth_select():
     global rotate_motor_steps
     PRESET = 'EARTH'
     ORBIT_STATUS = True
-    THETA, rotate_motor_steps = 0
+    THETA = 0
+    rotate_motor_steps = 0
 
 def moon_select():
     global PRESET
@@ -63,7 +64,8 @@ def moon_select():
     global rotate_motor_steps
     PRESET = 'MOON'
     ORBIT_STATUS = True
-    THETA, rotate_motor_steps = 0
+    THETA = 0
+    rotate_motor_steps = 0
 
 def mercury_select():
     global PRESET
@@ -72,7 +74,8 @@ def mercury_select():
     global rotate_motor_steps
     PRESET = 'MERCURY'
     ORBIT_STATUS = True
-    THETA, rotate_motor_steps = 0
+    THETA = 0
+    rotate_motor_steps = 0
 
 def stop_select():
     global PRESET
@@ -81,7 +84,8 @@ def stop_select():
     global rotate_motor_steps
     PRESET = None
     ORBIT_STATUS = False
-    THETA, rotate_motor_steps = 0
+    THETA = 0
+    rotate_motor_steps = 0
     
 
 def earth_calc(period=PERIOD):
@@ -167,6 +171,7 @@ def user_ellipse_calc(period=PERIOD):
 earthPresetButton = PushButton(master=app, command=earth_select, text='Earth', align="left")
 moonPresetButton = PushButton(master=app, command=moon_select, text='Moon', align="left")
 mercuryPresetButton = PushButton(master=app, command=mercury_select, text='Mercury', align="left")
+startPresetButton = PushButton(master=app, command=start_select, text='Start', align='left')
 stopPresetButton = PushButton(master=app, command=stop_select, text='Stop', align='left')
 killPresetButton = PushButton(master=app, command=kill_select, text='Kill', align='left')
 
@@ -193,12 +198,12 @@ step_m = 13 # Step GPIO Pin
 rotate_motor = RpiMotorLib.A4988Nema(direction_r, step_r, (21, 21, 21), "DRV8825")
 # GPIO.setup(EN_pin_r, GPIO.OUT) # set enable pin as output (may not be necessary)
 # GPIO.setup(EN_pin_m, GPIO.OUT) # set enable pin as output (may not be necessary)
-STEPS_PER_REVOLUTION_R = 200 # todo find actual value, may be 400
+STEPS_PER_REVOLUTION_R = 800 # todo find actual value, may be 400
 rotate_motor_steps = 0
 magnet_motor = RpiMotorLib.A4988Nema(direction_m, step_m, (21, 21, 21), "DRV8825")
 STEPS_PER_REVOLUTION_M = 200
 magnet_motor_steps = 0
-METERS_PER_STEP = 0.0011 # todo find actual value
+METERS_PER_STEP = 0.00011 # todo find actual value
 CLOCKWISE = True # todo find actual value (change to false if spinning wrong direction)
 
 #Possible fail points
@@ -222,6 +227,7 @@ while True:
             break
         # extension
         desired_steps = (int)(d / METERS_PER_STEP)
+        print('Desired Steps:', desired_steps, 'Current Steps:', magnet_motor_steps)
         time_between_steps_m = 0.0005
         if desired_steps > magnet_motor_steps:
             magnet_motor.motor_go(not CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps),
@@ -232,10 +238,13 @@ while True:
         magnet_motor_steps = desired_steps
         #rotation
         time_between_steps_r = 2 * pi / w / STEPS_PER_REVOLUTION_R
+        print('Time Between Steps:', time_between_steps_r)
         rotate_motor.motor_go(not CLOCKWISE, 'Full', 1, 0, False, max(0.0005, time_between_steps_r))
+        #rotate_motor.motor_go(not CLOCKWISE, 'Full', 2, max(0.0005, time_between_steps_r), False, 0)
         rotate_motor_steps += 1
         THETA = (2 * pi / STEPS_PER_REVOLUTION_R) * rotate_motor_steps
-        magnet_motor.motor_go(CLOCKWISE, 'Full', 1, 0, False, 0.001)
+        magnet_motor.motor_go(not CLOCKWISE, 'Full', 1, 0, False, 0.001)
+        #magnet_motor.motor_go(not CLOCKWISE, 'Full', 2, 0.001, False, 0)
 
         info = f"d: {d}, v: {v}, w: {w}, time_between_steps: {time_between_steps_r}, steps taken: {desired_steps - magnet_motor_steps}" # log important data
         logger.info(info)
