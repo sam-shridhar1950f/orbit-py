@@ -91,6 +91,16 @@ def margaret_select():
     THETA = 0
     rotate_motor_steps = 0
 
+def margaret_select():
+    global PRESET
+    global ORBIT_STATUS
+    global THETA
+    global rotate_motor_steps
+    PRESET = 'MARGARET'
+    ORBIT_STATUS = True
+    THETA = 0
+    rotate_motor_steps = 0
+
 def stop_select():
     global PRESET
     global ORBIT_STATUS
@@ -225,6 +235,8 @@ def start_select():
                 d, v, w = moon_calc()
             if PRESET == 'MERCURY':
                 d, v, w = mercury_calc()
+            if PRESET == 'MARGARET':
+                d, v, w == margaret_calc()
             if PRESET == "USER_SELECT":
                 d, v, w = user_ellipse_calc()
             if d == -1:
