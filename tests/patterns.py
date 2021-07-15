@@ -22,14 +22,15 @@ def turn_motor(motor, direction, type, steps, stepdelay,boolean,initdelay):
 #t1.join()
 #t2.join()
 
-for iteration in range(0, 4):
-    t1 = threading.Thread(target=turn_motor, args=(rotate_motor, CLOCKWISE, 'Full', 800, 0.01, False, 0.05))
-    t2 = threading.Thread(target=turn_motor, args=(magnet_motor, not CLOCKWISE, 'Full', 200, 0.001, False, 0.05))
+for iteration in range(1, 6):
+    if iteration % 3 == 0:
+        if CLOCKWISE:
+            CLOCKWISE = False
+        if CLOCKWISE == False:
+            CLOCKWISE = True
+    t1 = threading.Thread(target=turn_motor, args=(rotate_motor, CLOCKWISE, 'Full', 800, 0.01, False, 0))
+    t2 = threading.Thread(target=turn_motor, args=(magnet_motor, not CLOCKWISE, 'Full', 200, 0.001, False, 0))
     t1.start()
     t2.start()
     t1.join()
     t2.join()
-
-        
-
-
