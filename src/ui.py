@@ -188,7 +188,7 @@ EN_pin_m = 24 # enable pin (LOW to enable)
 rotation_motor = RpiMotorLib.A4988Nema(direction_r, step_r, (21, 21, 21), "DRV8825")
 GPIO.setup(EN_pin_r, GPIO.OUT) # set enable pin as output (may not be necessary)
 GPIO.setup(EN_pin_m, GPIO.OUT) # set enable pin as output (may not be necessary)
-STEPS_PER_REVOLUTION_R = 200 # todo find actual value, may be 400
+STEPS_PER_REVOLUTION_R = 800 # todo find actual value, may be 400
 rotate_motor_steps = 0
 magnet_motor = RpiMotorLib.A4988Nema(direction_m, step_m, (21, 21, 21), "DRV8825")
 STEPS_PER_REVOLUTION_M = 200
@@ -208,44 +208,26 @@ def turn_motor(motor, direction, type, steps, stepdelay, initdelay):
 def turn_rotate_motor():
     global THETA
     global rotate_motor_steps
-    d, v, w = -1
-    if PRESET == 'EARTH':
-        d, v, w = earth_calc()
-    if PRESET == 'MOON':
-        d, v, w = moon_calc()
-    if PRESET == 'MERCURY':
-        d, v, w = mercury_calc()
-    if PRESET == "USER_SELECT":
-        d, v, w = user_ellipse_calc()
-    time_between_steps_r = 2 * pi / w / STEPS_PER_REVOLUTION_R
-    rotation_motor.motor_go(not CLOCKWISE, 'Full', 1, 0, False, max(0.0005, time_between_steps_r))
-    rotate_motor_steps += 1
-    THETA = (2 * pi / STEPS_PER_REVOLUTION_R) * rotate_motor_steps
+    # d, v, w = -1
+    # if PRESET == 'EARTH':
+    #     d, v, w = earth_calc()
+    # if PRESET == 'MOON':
+    #     d, v, w = moon_calc()
+    # if PRESET == 'MERCURY':
+    #     d, v, w = mercury_calc()
+    # if PRESET == "USER_SELECT":
+    #     d, v, w = user_ellipse_calc()
+    # time_between_steps_r = 2 * pi / w / STEPS_PER_REVOLUTION_R
+    time_between_steps_r = 0.01
+    while True:
+        rotation_motor.motor_go(not CLOCKWISE, 'Full', STEPS_PER_REVOLUTION_R, time_between_steps_r, False, 0.001)
+        rotate_motor_steps += 1
+        THETA = (2 * pi / STEPS_PER_REVOLUTION_R) * rotate_motor_steps
 
 def turn_magnet_motor():
     global magnet_motor_steps
-    d, v, w = -1
-    if PRESET == 'EARTH':
-        d, v, w = earth_calc()
-    if PRESET == 'MOON':
-        d, v, w = moon_calc()
-    if PRESET == 'MERCURY':
-        d, v, w = mercury_calc()
-    if PRESET == "USER_SELECT":
-        d, v, w = user_ellipse_calc()
-    desired_steps = (int)(d / METERS_PER_STEP)
-    time_between_steps_m = 0.0005
-    if desired_steps > magnet_motor_steps:
-        magnet_motor.motor_go(not CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps) + 1, #may need to change to - 1
-                                  max(0.0005, time_between_steps_m), False, 0)
-    elif desired_steps < magnet_motor_steps:
-        magnet_motor.motor_go(CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps) - 1, #may need to change to + 1
-                                        max(0.0005, time_between_steps_m), False, 0)
-    magnet_motor_steps = desired_steps
-
-while True:
-    if ORBIT_STATUS:
-        d, v, w = -1, -1, -1
+    while True:
+        d, v, w = -1
         if PRESET == 'EARTH':
             d, v, w = earth_calc()
         if PRESET == 'MOON':
@@ -254,35 +236,24 @@ while True:
             d, v, w = mercury_calc()
         if PRESET == "USER_SELECT":
             d, v, w = user_ellipse_calc()
-        if d == -1:
-            break
-        #rotation
-        time_between_steps_r = 2 * pi / w / STEPS_PER_REVOLUTION_R
-        t1 = threading.Thread(target=turn_motor, args=(rotation_motor, not CLOCKWISE, 'Full', 1, 0, False, max(0.0005, time_between_steps_r)))
-        # extension
         desired_steps = (int)(d / METERS_PER_STEP)
-        time_between_steps_m = 0.0005
-        t2 = threading.Thread(target=turn_motor, args=(magnet_motor, not CLOCKWISE, 'Full', 0, 0, False, 0))
+        time_between_steps_m = 0.001
         if desired_steps > magnet_motor_steps:
-            t2 = threading.Thread(target=turn_motor, args=(magnet_motor, not CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps) + 1, #may need to change to - 1
-                                  max(0.0005, time_between_steps_m), False, 0))
-            # magnet_motor.motor_go(not CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps),
-            #                       max(0.0005, time_between_steps_m), False, 0)
+            magnet_motor.motor_go(not CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps) + 1, #may need to change to - 1
+                                      time_between_steps_m, False, 0)
         elif desired_steps < magnet_motor_steps:
-            t2 = threading.Thread(target=turn_motor,
-                                  args=(magnet_motor, CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps) - 1, #may need to change to + 1
-                                        max(0.0005, time_between_steps_m), False, 0))
-            # magnet_motor.motor_go(CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps),
-            #                       max(0.0005, time_between_steps_m), False, 0)
+            magnet_motor.motor_go(CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps) - 1, #may need to change to + 1
+                                            time_between_steps_m, False, 0)
+        magnet_motor_steps = desired_steps
+
+while True:
+    if ORBIT_STATUS:
+        t1 = threading.Thread(target=turn_rotate_motor)
+        t2 = threading.Thread(target=turn_magnet_motor)
         t1.start()
         t2.start()
         t1.join()
         t2.join()
-        magnet_motor_steps = desired_steps
-        # rotation_motor.motor_go(not CLOCKWISE, 'Full', 1, 0, False, max(0.0005, time_between_steps_r))
-        rotate_motor_steps += 1
-        THETA = (2 * pi / STEPS_PER_REVOLUTION_R) * rotate_motor_steps
-
     else:
         rotation_motor.motor_stop()
         magnet_motor.motor_stop()
