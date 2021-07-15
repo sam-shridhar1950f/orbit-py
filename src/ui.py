@@ -177,10 +177,10 @@ userSubmit = PushButton(master=app, text="Submit", command=user_ellipse_select, 
 app.display()
 
 #stepper motor example code
-direction_r = 16 # Direction (DIR) GPIO Pin
-step_r = 13 # Step GPIO Pin
+direction_r = 5 # Direction (DIR) GPIO Pin
+step_r = 12 # Step GPIO Pin
 EN_pin_r = 24 # enable pin (LOW to enable)
-direction_m = 16 # Direction (DIR) GPIO Pin
+direction_m = 26 # Direction (DIR) GPIO Pin
 step_m = 13 # Step GPIO Pin
 EN_pin_m = 24 # enable pin (LOW to enable)
 
@@ -193,7 +193,7 @@ rotate_motor_steps = 0
 magnet_motor = RpiMotorLib.A4988Nema(direction_m, step_m, (21, 21, 21), "DRV8825")
 STEPS_PER_REVOLUTION_M = 200
 magnet_motor_steps = 0
-METERS_PER_STEP = 0.0011 # todo find actual value
+METERS_PER_STEP = 0.00011 # todo find actual value
 CLOCKWISE = True # todo find actual value (change to false if spinning wrong direction)
 
 #Possible fail points
