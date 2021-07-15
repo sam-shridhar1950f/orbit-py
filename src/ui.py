@@ -24,7 +24,7 @@ SUN_MASS = 1.989e+30 #kg
 MERCURY_MASS = 3.285e+23 #kg
 URANUS_MASS = 8.681e+25 #kg
 MARGARET_MASS = -5.5e+15
-A = 10 * 2.54 / 100 #m todo make shorter to like 15
+A = 8 * 2.54 / 100 #m todo make shorter to like 15
 PERIOD = 30 #s
 EARTH_A = 149.60e+9 #m
 MOON_A = 384748000 #ms
@@ -81,16 +81,6 @@ def mercury_select():
     THETA = 0
     rotate_motor_steps = 0
     
-def margaret_select():
-    global PRESET
-    global ORBIT_STATUS
-    global THETA
-    global rotate_motor_steps
-    PRESET = 'MARGARET'
-    ORBIT_STATUS = True
-    THETA = 0
-    rotate_motor_steps = 0
-
 def margaret_select():
     global PRESET
     global ORBIT_STATUS
@@ -235,8 +225,6 @@ def start_select():
                 d, v, w = moon_calc()
             if PRESET == 'MERCURY':
                 d, v, w = mercury_calc()
-            if PRESET == 'MARGARET':
-                d, v, w == margaret_calc()
             if PRESET == "USER_SELECT":
                 d, v, w = user_ellipse_calc()
             if d == -1:
@@ -321,8 +309,6 @@ while True:
             d, v, w = moon_calc()
         if PRESET == 'MERCURY':
             d, v, w = mercury_calc()
-        if PRESET == 'MARGARET':
-            d, v, w == margaret_calc()
         if PRESET == "USER_SELECT":
             d, v, w = user_ellipse_calc()
         if d == -1:
@@ -330,27 +316,22 @@ while True:
         # extension
         desired_steps = (int)(d / METERS_PER_STEP)
         print('Desired Steps:', desired_steps, 'Current Steps:', magnet_motor_steps)
-        time_between_steps_m = 0.0005
+        time_between_steps_m = 0.001
         if desired_steps > magnet_motor_steps:
-            magnet_motor.motor_go(not CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps),
+            magnet_motor.motor_go(not CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps) + 1,
                                   max(0.0005, time_between_steps_m), False, 0.001)
         elif desired_steps < magnet_motor_steps:
-            magnet_motor.motor_go(CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps),
+            magnet_motor.motor_go(CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps) - 1,
                                   max(0.0005, time_between_steps_m), False, 0.001)
         magnet_motor_steps = desired_steps
         #rotation
         time_between_steps_r = 2 * pi / w / STEPS_PER_REVOLUTION_R
         print('Time Between Steps:', time_between_steps_r)
-        rotate_motor.motor_go(not CLOCKWISE, 'Full', 1, 0, False, max(0.0005, time_between_steps_r))
+        rotate_motor.motor_go(not CLOCKWISE, 'Full', 1, 0, False, max(0.001, time_between_steps_r))
         #rotate_motor.motor_go(not CLOCKWISE, 'Full', 2, max(0.0005, time_between_steps_r), False, 0)
         rotate_motor_steps += 1
         THETA = (2 * pi / STEPS_PER_REVOLUTION_R) * rotate_motor_steps
-        magnet_motor.motor_go(not CLOCKWISE, 'Full', 1, 0, False, 0.001)
-        #magnet_motor.motor_go(not CLOCKWISE, 'Full', 2, 0.001, False, 0)
-
-        info = f"d: {d}, v: {v}, w: {w}, time_between_steps: {time_between_steps_r}, steps taken: {desired_steps - magnet_motor_steps}" # log important data
-        logger.info(info)
+        #magnet_motor.motor_go(not CLOCKWISE, 'Full', 1, 0, False, 0.001)
     else:
         rotate_motor.motor_stop()
         magnet_motor.motor_stop()
-        # GPIO.cleanup()

@@ -14,8 +14,8 @@ magnet_motor = RpiMotorLib.A4988Nema(direction_m, step_m, (21, 21, 21), "DRV8825
 def turn_motor(motor, direction, type, steps, stepdelay,boolean,initdelay):
     motor.motor_go(direction, type, steps, stepdelay, boolean, initdelay)
 
-t1 = threading.Thread(target=turn_motor, args=(rotate_motor, CLOCKWISE, 'Full', 800, 0.01, False, 0.05))
-t2 = threading.Thread(target=turn_motor, args=(magnet_motor, not CLOCKWISE, 'Full', 800, 0.001, False, 0.05))
+t1 = threading.Thread(target=turn_motor, args=(rotate_motor, CLOCKWISE, 'Full', 800, 0.0243157, False, 0.05))
+t2 = threading.Thread(target=turn_motor, args=(magnet_motor, CLOCKWISE, 'Full', 2400, 0.003, False, 0.05))
 
 t1.start()
 t2.start()
