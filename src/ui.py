@@ -22,7 +22,7 @@ MOON_MASS = 7.34767309e+22 #kg
 SUN_MASS = 1.989e+30 #kg
 MERCURY_MASS = 3.285e+23 #kg
 A = 10 * 2.54 / 100 #m todo make shorter to like 15
-PERIOD = 45 #s
+PERIOD = 30 #s
 EARTH_A = 149.60e+9 #m
 MOON_A = 384748000 #m
 MERCURY_A = 57.909e+9 #m
@@ -167,7 +167,67 @@ def user_ellipse_calc(period=PERIOD):
         return -1, -1, -1
     else:
         return d, v, w  # returns distance, velocity, and angular velocity
+    
+#stepper motor example code
+direction_r = 5 # Direction (DIR) GPIO Pin
+step_r = 12 # Step GPIO Pin
+# EN_pin_r = 24 # enable pin (LOW to enable)
+direction_m = 26 # Direction (DIR) GPIO Pin
+step_m = 13 # Step GPIO Pin
+# EN_pin_m = 24 # enable pin (LOW to enable)
 
+# Declare a instance of class pass GPIO pins numbers and the motor type
+rotate_motor = RpiMotorLib.A4988Nema(direction_r, step_r, (21, 21, 21), "DRV8825")
+# GPIO.setup(EN_pin_r, GPIO.OUT) # set enable pin as output (may not be necessary)
+# GPIO.setup(EN_pin_m, GPIO.OUT) # set enable pin as output (may not be necessary)
+STEPS_PER_REVOLUTION_R = 800 # todo find actual value, may be 400
+rotate_motor_steps = 0
+magnet_motor = RpiMotorLib.A4988Nema(direction_m, step_m, (21, 21, 21), "DRV8825")
+STEPS_PER_REVOLUTION_M = 200
+magnet_motor_steps = 0
+METERS_PER_STEP = 0.00011 # todo find actual value
+CLOCKWISE = True # todo find actual value (change to false if spinning wrong direction)
+
+def start_select():
+    global rotate_motor_steps
+    global magnet_motor_steps
+    global THETA
+    if ORBIT_STATUS:
+        while rotate_motor_steps <= STEPS_PER_REVOLUTION_R:
+            d, v, w = -1, -1, -1
+            if PRESET == 'EARTH':
+                d, v, w = earth_calc()
+            if PRESET == 'MOON':
+                d, v, w = moon_calc()
+            if PRESET == 'MERCURY':
+                d, v, w = mercury_calc()
+            if PRESET == "USER_SELECT":
+                d, v, w = user_ellipse_calc()
+            if d == -1:
+                break
+            # extension
+            desired_steps = (int)(d / METERS_PER_STEP)
+            print('Desired Steps:', desired_steps, 'Current Steps:', magnet_motor_steps)
+            time_between_steps_m = 0.0005
+            if desired_steps > magnet_motor_steps:
+                magnet_motor.motor_go(not CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps),
+                                      max(0.0005, time_between_steps_m), False, 0.001)
+            elif desired_steps < magnet_motor_steps:
+                magnet_motor.motor_go(CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps),
+                                      max(0.0005, time_between_steps_m), False, 0.001)
+            magnet_motor_steps = desired_steps
+            #rotation
+            time_between_steps_r = 2 * pi / w / STEPS_PER_REVOLUTION_R
+            print('Time Between Steps:', time_between_steps_r)
+            rotate_motor.motor_go(not CLOCKWISE, 'Full', 1, 0, False, max(0.0005, time_between_steps_r))
+            #rotate_motor.motor_go(not CLOCKWISE, 'Full', 2, max(0.0005, time_between_steps_r), False, 0)
+            rotate_motor_steps += 1
+            THETA = (2 * pi / STEPS_PER_REVOLUTION_R) * rotate_motor_steps
+            magnet_motor.motor_go(not CLOCKWISE, 'Full', 1, 0, False, 0.001)
+    else:
+        rotate_motor.motor_stop()
+        magnet_motor.motor_stop()
+        
 earthPresetButton = PushButton(master=app, command=earth_select, text='Earth', align="left")
 moonPresetButton = PushButton(master=app, command=moon_select, text='Moon', align="left")
 mercuryPresetButton = PushButton(master=app, command=mercury_select, text='Mercury', align="left")
@@ -182,7 +242,6 @@ mainbodyBox = TextBox(master=app, text="Main Body Mass", align="left",width="fil
 # PlanetaryPeriodBox = TextBox(master=app, text="Period", align="left",width="fill")
 eccentricityBox = TextBox(master=app, text="Eccentricity", align="left", width="fill")
 userSubmit = PushButton(master=app, text="Submit", command=user_ellipse_select, align="left")
-
 
 app.display()
 
