@@ -16,7 +16,7 @@ EARTH_MASS = 5.97216787e+24 #kg
 MOON_MASS = 7.34767309e+22 #kg
 SUN_MASS = 1.989e+30 #kg
 MERCURY_MASS = 3.285e+23 #kg
-A = 18 * 2.54 / 100 #m todo make shorter to like 15
+A = 8 * 2.54 / 100 #m todo make shorter to like 15
 PERIOD = 45 #s
 EARTH_A = 149.60e+9 #m
 MOON_A = 384748000 #m
@@ -49,7 +49,8 @@ def earth_select():
     global rotate_motor_steps
     PRESET = 'EARTH'
     ORBIT_STATUS = True
-    THETA, rotate_motor_steps = 0
+    THETA = 0
+    rotate_motor_steps = 0
 
 def moon_select():
     global PRESET
@@ -58,7 +59,8 @@ def moon_select():
     global rotate_motor_steps
     PRESET = 'MOON'
     ORBIT_STATUS = True
-    THETA, rotate_motor_steps = 0
+    THETA = 0
+    rotate_motor_steps = 0
 
 def mercury_select():
     global PRESET
@@ -67,7 +69,8 @@ def mercury_select():
     global rotate_motor_steps
     PRESET = 'MERCURY'
     ORBIT_STATUS = True
-    THETA, rotate_motor_steps = 0
+    THETA = 0
+    rotate_motor_steps = 0
 
 def stop_select():
     global PRESET
@@ -76,7 +79,8 @@ def stop_select():
     global rotate_motor_steps
     PRESET = None
     ORBIT_STATUS = False
-    THETA, rotate_motor_steps = 0
+    THETA = 0
+    rotate_motor_steps = 0
     
 
 def earth_calc(period=PERIOD):
@@ -220,14 +224,14 @@ def turn_rotate_motor():
     # time_between_steps_r = 2 * pi / w / STEPS_PER_REVOLUTION_R
     time_between_steps_r = 0.01
     while True:
-        rotation_motor.motor_go(not CLOCKWISE, 'Full', STEPS_PER_REVOLUTION_R, time_between_steps_r, False, 0.001)
+        rotation_motor.motor_go(not CLOCKWISE, 'Full', 1, 0, False, 0.001)
         rotate_motor_steps += 1
         THETA = (2 * pi / STEPS_PER_REVOLUTION_R) * rotate_motor_steps
+        print('Theta', THETA)
 
 def turn_magnet_motor():
     global magnet_motor_steps
     while True:
-        d, v, w = -1
         if PRESET == 'EARTH':
             d, v, w = earth_calc()
         if PRESET == 'MOON':
@@ -237,6 +241,8 @@ def turn_magnet_motor():
         if PRESET == "USER_SELECT":
             d, v, w = user_ellipse_calc()
         desired_steps = (int)(d / METERS_PER_STEP)
+        print('Desired Steps:', desired_steps)
+        print('Current Steps:', rotate_motor_steps)
         time_between_steps_m = 0.01
         if desired_steps > magnet_motor_steps:
             magnet_motor.motor_go(not CLOCKWISE, 'Full', abs(desired_steps - magnet_motor_steps) + 1, #may need to change to - 1
