@@ -7,7 +7,7 @@ import time
 from sys import exit
 import logging 
 
-# log file config 
+#log file config 
 logging.basicConfig(filename="out.log", format="%(message)s",filemode="w")
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG) 
