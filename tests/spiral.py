@@ -1,10 +1,10 @@
 from RpiMotorLib import RpiMotorLib
 import threading
 #stepper motor example code
-direction_r = 5 # Direction (DIR) GPIO Pin
+direction_r = 5 #Direction (DIR) GPIO Pin
 step_r = 12 # Step GPIO Pin
 # EN_pin_r = 24 # enable pin (LOW to enable)
-direction_m = 26 # Direction (DIR) GPIO Pin
+direction_m = 26 #Direction (DIR) GPIO Pin
 step_m = 13 # Step GPIO Pin
 CLOCKWISE = True
 print("v")
