@@ -2,7 +2,7 @@
 
 </p>
 <p align="center">
-<i>Orbit Simulator, a mechanical system that can simulate virtually any orbit in the universe.</i>
+<i>Orbit Simulator, kinetic art that can simulate virtually any orbit in the universe.</i>
 </p>
 
 
