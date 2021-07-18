@@ -1,9 +1,8 @@
 <p align="center">
-<img src="https://raw.githubusercontent.com/sam-shridhar1950f/konnect-cs/master/logo.png"/>
 
 </p>
 <p align="center">
-<i>Konnect, an award winning assistive technology pioneering the combination of machine learning and inexpensive rehabilitation.</i>
+<i>Orbit Simulator, a mechanical system that can simulate virtually any orbit in the universe. This project was completed as the capstone for the engineering concentration at the Governor's Honors Program (GHP) in Georgia.</i>
 </p>
 
 
