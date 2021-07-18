@@ -2,13 +2,12 @@
 
 </p>
 <p align="center">
-<i>Orbit Simulator, a mechanical system that can simulate virtually any orbit in the universe. This project was completed as the capstone for the engineering concentration at the Governor's Honors Program (GHP) in Georgia.</i>
+<i>Orbit Simulator, a mechanical system that can simulate virtually any orbit in the universe.</i>
 </p>
 
 
 <p align="center">
-  The code in this repository was a software engineering project in the <a href="https://www.gcpsk12.org/gsmst">GSMST</a> engineering fair.<br/>
-  Konnect is an intelligent, affordable assistive wearable constructed in the .NET framework.
+  This project was completed as the capstone for the engineering concentration at the Governor's Honors Program (GHP) in Georgia.<br/>
 </p>
 
 <br/>
