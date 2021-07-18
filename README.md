@@ -10,23 +10,13 @@
   This project was completed as the capstone for the engineering concentration at the Governor's Honors Program (GHP) in Georgia.<br/>
 </p>
 
-<br/>
-<p align="center">
-<h3>Prototype:</h3>
-<img src="https://raw.githubusercontent.com/sam-shridhar1950f/konnect-cs/master/Documentation/model.png"/>
-<img src="https://raw.githubusercontent.com/sam-shridhar1950f/konnect-cs/master/Documentation/Testing2.gif"/>
-</p>
-<p align="center">
-<h3>GUI:</h3>
-<img src="https://raw.githubusercontent.com/sam-shridhar1950f/konnect-cs/master/Documentation/GUI.PNG"/>
-</p>
 
-<br/>
 
 <h3>Team Members:</h3>
 <ul>
-  <li>Jack Prewitt - <a href="https://github.com/JBPrew">@JBPrew</a></li>
-  <li>Utkarsh Borikar</li>
+  <li>Jatong Su - <a href="https://github.com/js2585">@js2585</a></li>
+  <li>Henry Traynor - <a href="https://github.com/HenryTraynor">@HenryTraynor</a></li>
+  <li>Spencer Hopkins</li>
 </ul>
 <br>
 
