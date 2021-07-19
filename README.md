@@ -17,7 +17,7 @@
 <ul>
   <li>Jatong Su - <a href="https://github.com/js2585">@js2585 (Programming)</a></li>
   <li>Henry Traynor - <a href="https://github.com/HenryTraynor">@HenryTraynor (Mechatronics)</a></li>
-  <li>Spencer Hopkins (Mechanical Design))</li>
+  <li>Spencer Hopkins (Mechanical Design)</li>
 </ul>
 <br>
 
