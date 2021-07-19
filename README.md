@@ -10,7 +10,7 @@
   This project was completed as the capstone for the engineering concentration at the Governor's Honors Program (GHP) in Georgia.<br/>
 </p>
 
-<p align="center"><a href="https://drive.google.com/drive/folders/1baY3QL0SgYpmnjhPKRlufZH7Qz6aoTUQ?usp=sharing">Photo Repository</a></p>
+<p align="center"><a href="https://drive.google.com/drive/folders/1baY3QL0SgYpmnjhPKRlufZH7Qz6aoTUQ?usp=sharing" target="_blank">Photo Repository</a></p>
 
 
 <h3>Team Members:</h3>
