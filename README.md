@@ -53,7 +53,7 @@
 </div>
 
 <br>
-<p align="center"><a href="https://drive.google.com/drive/folders/1baY3QL0SgYpmnjhPKRlufZH7Qz6aoTUQ?usp=sharing" target="_blank">Photo Repository</a></p>
+<p align="center"><a href="https://drive.google.com/drive/folders/1baY3QL0SgYpmnjhPKRlufZH7Qz6aoTUQ?usp=sharing" target="_blank">Photo Repository (Includes Videos)</a></p>
 
 <br/>
 
