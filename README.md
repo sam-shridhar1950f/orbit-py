@@ -17,7 +17,7 @@
 <p>The table abstracts a system of gears and two motors. One motor spins an axle along a circular track. The other moves a sled fitted with neodymium magnets linearly along a timing belt. With its bidirectional motion, the system has the power to model accurate ellipses.</p>
 <img width="75%" src="photos/system.png">
 <img width="75%" src="photos/sled.png">
-<figcaption>The neodymium magnets fitted to the sled, which linearly along the axle spinning in a circle. Employing certain physics equations, the code adjusts the distance the sled moves along the timing belt to ensure the eccentricity of the orbit is modeled. The code additionally modulates the velocity of the stepper motors to make the system true to the actual orbit's velocity (scaled down).</figcaption>
+<p>The neodymium magnets fitted to the sled, which linearly along the axle spinning in a circle. Employing certain physics equations, the code adjusts the distance the sled moves along the timing belt to ensure the eccentricity of the orbit is modeled. The code additionally modulates the velocity of the stepper motors to make the system true to the actual orbit's velocity (scaled down).</p>
 <img width="75%" src="photos/pattern.png">
 <p>To top it off, a tabletop, filled with sand, rests on top of the table's base.In the middle, a static object rests to emulate a central body. Inches away rests a metal ball, which emulates the satellite. When the system is turned on, the neodymium magnets latch onto the metal ball: making the metal ball travel the orbit's path. The metal ball traces the orbit in the sand, allowing viewers to witness what orbits of planets from Mercury to Jupiter look like in real-time, on a physical model. (The system can also create pretty patterns, like spirals).</p>
 
