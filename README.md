@@ -49,6 +49,7 @@
 </ul>
 
 <div align="center">
+  <h3>Acknowledgements</h4>
 <p>We would like to thank the GHP Engineering Faculty (Mr. Bouchard, Hannah, and Josh) for their guidance, and Tom, the GOAT, for getting us an arbor press.</p>
 </div>
 
